@@ -1,3 +1,12 @@
+async function upload() {
+	var dd=document.getElementById('can');
+	var filein=document.getElementById('finp');
+	var img = new SimpleImage(filein);
+	img.drawTo(dd);
+	var data = dd.getImageData();
+	console.log(data);
+}
+
 async function submit() {
 	var url = "127.0.0.1:6969";
 

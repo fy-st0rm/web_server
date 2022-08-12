@@ -24,16 +24,6 @@ def server_warning(msg):
 	print(f"{Colors.YELLOW}[SERVER WARNING]: {msg}{Colors.DEFAULT}")
 
 
-# Constants
-CREATE = "create"
-DELETE = "delete"
-UPDATE = "update"
-OBJECT = "object"
-ENTRY  = "entry"
-FROM   = "from"
-IN     = "in"
-
-PRIM_CMDS = [CREATE, DELETE, UPDATE]
 
 """
 Database query result is returned in the form of `Result` class.

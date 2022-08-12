@@ -37,14 +37,14 @@ class Request_Engine:
 	def __init__(self):
 		self.database = Database()
 
-	def __get_error_html(self, error: str) -> str:
-		html = f"""
+	def __get_error_html(self, error: str) -> bytes:
+		html = bytes(f"""
 			<html>
 			<body>
 				<h1>{error}</h1>
 			</body>
 			</html>
-		"""
+		""", encoding=FORMAT)
 		return html
 
 	def __load_img(self, req: dict) -> dict:
@@ -65,57 +65,59 @@ class Request_Engine:
 
 		return req
 
-	def __make_str(self, req: dict) -> str:
+	def __construct_bytes(self, req: dict) -> bytes:
 		# Converts json request to string
-		http_res = ""
-		head    = req.pop("head") + "\r\n"
-		payload = req.pop("payload")
+		http_res = b""
+		head    = req.pop(HEAD) + b"\r\n"
+		payload = req.pop(PAYLOAD)
 
 		http_res += head
 		for key in req:
-			http_res += f"{key}: {req[key]}\r\n"
+			http_res += key + b": " + req[key] + b"\r\n" 
 
-		http_res += f"\r\n{payload}\r\n"
+		http_res += b"\r\n" + payload + b"\r\n"
 		return http_res
 
 	# Request handlers
-	def __get_handler(self, req: dict, ret_req: dict):
-		# Opening the root file
+	def __get_handler(self, req: dict) -> dict:
+		ret_req	= {}
+
 		if req["path"] == "/":
 			try:
-				with open(f"{WEB_DIR}/{ROOT_FILE}", "r") as f:
-					ret_req.update({"payload": f.read()})
-				ret_req.update({"head": "HTTP/1.1 200 OK"})
-				ret_req.update({"Content-Type": "text/html"})
-				ret_req.update({"Content-Length": len(ret_req["payload"])})
+				with open(f"{WEB_DIR}/{ROOT_FILE}", "rb") as f:
+					content = f.read()
+
+				ret_req.update({PAYLOAD: content})
+				ret_req.update({HEAD: b"HTTP/1.1 200 OK"})
+				ret_req.update({CONTENT_TYPE: types["html"]})
+				ret_req.update({CONTENT_LEN: f"{len(content)}".encode(FORMAT)})
+
 			except Exception as e:
-				ret_req.update({"payload": self.__get_error_html(e)})
-				ret_req.update({"head": f"HTTP/1.1 500 Failed to open {ROOT_FILE}"})
+				ret_req.update({PAYLOAD: self.__get_error_html(e)})
+				ret_req.update({HEAD: bytes(f"HTTP/1.1 500 Failed to open {ROOT_FILE}", encoding=FORMAT)})
+
 		else:
 			path = req["path"]
-			try:
-				# Extracting the extension
-				ext = path.split(".")[-1]
-				with open(f"{WEB_DIR}{path}", "r") as f:
-					ret_req.update({"payload": f.read()})
-					ret_req.update({"Content-Length": len(ret_req["payload"])})
-				ret_req.update({"head": "HTTP/1.1 200 OK"})
 
-				# Adding extra tags
-				if ext == "css":
-					ret_req.update({"Content-Type": "text/css"})
-				elif ext == "html":
-					ret_req.update({"Content-Type": "text/html"})
-				elif ext == "js":
-					ret_req.update({"Content-Type": "text/js"})
+			try:
+				ext = path.split(".")[-1]
+				full_path = f"{WEB_DIR}{path}"
+				if ext not in sup_types: raise Exception(f"Extension: {ext} is not supported yet.")
+
+				with open(full_path, "rb") as f:
+					content = f.read()
+
+				ret_req.update({HEAD: b"HTTP/1.1 200 OK"})
+				ret_req.update({PAYLOAD: content})
+				ret_req.update({CONTENT_LEN: f"{os.path.getsize(full_path)}".encode(FORMAT)})
+				ret_req.update({CONTENT_TYPE: types[ext]})
 
 			except Exception as e:
 				# If failed to open the sugessted file
-				ret_req.update({"payload": self.__get_error_html(f"Unknown endpoint {path}")})
-				ret_req.update({"head": f"HTTP/1.1 500 Unknown endpoint"})
+				ret_req.update({PAYLOAD: self.__get_error_html(f"Unknown endpoint {path}")})
+				ret_req.update({HEAD: b"HTTP/1.1 500 Unknown endpoint"})
 				server_error(e)
-
-		ret_req = self.__load_img(ret_req)
+		return ret_req
 
 	def __post_handler(self, req: dict, ret_req: dict):
 		payload = req["payload"]
@@ -132,17 +134,16 @@ class Request_Engine:
 		ret_req.update({"payload": res.payload})
 
 	def parse(self, req: dict) -> str:
-		ret_req = {}
 
 		# Get request handler
 		if req["request"] == GET:
-			self.__get_handler(req, ret_req)
+			ret_req = self.__get_handler(req)
 		elif req["request"] == POST:
 			self.__post_handler(req, ret_req)
 		else:
 			_req = req["request"]
-			ret_req.update({"payload": self.__get_error_html(f"Unknown request {_req}")})
-			ret_req.update({"head": f"HTTP/1.1 500 Unknown request"})
+			ret_req.update({PAYLOAD: self.__get_error_html(f"Unknown request {_req}")})
+			ret_req.update({HEAD: bytes(f"HTTP/1.1 500 Unknown request", encoding=FORMAT)})
 
-		return self.__make_str(ret_req)
+		return self.__construct_bytes(ret_req)
 

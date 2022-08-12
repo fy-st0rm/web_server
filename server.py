@@ -29,7 +29,8 @@ class Server:
 			if recv:
 				req = self.http_parser.parse(recv)
 				res = self.req_engine.parse(req)
-				conn.send(res.encode())
+				print(res)
+				conn.send(res)
 			else:
 				alive = False
 
