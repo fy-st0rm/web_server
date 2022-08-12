@@ -105,9 +105,6 @@ class Request_Engine:
 		ret_req = {}
 		payload = req["payload"]
 
-		server_sucess(f"Payload received")
-		server_warning(f"{payload}")
-
 		qry = Query(payload["cmd"], payload["payload"])
 		res = self.database.query(qry)
 
@@ -115,6 +112,7 @@ class Request_Engine:
 		ret_req.update({CONTENT_TYPE: res.content_type})
 		ret_req.update({CONTENT_LEN: res.content_len})
 		ret_req.update({PAYLOAD: res.payload})
+		return ret_req
 
 	def parse(self, req: dict) -> str:
 

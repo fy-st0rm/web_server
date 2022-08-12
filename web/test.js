@@ -1,32 +1,15 @@
+
 async function upload() {
-	var dd=document.getElementById('can');
-	var filein=document.getElementById('finp');
-	var img = new SimpleImage(filein);
-	img.drawTo(dd);
-	var data = dd.getImageData();
-	console.log(data);
-}
-
-async function submit() {
-	var url = "127.0.0.1:6969";
-
-	var data = `{
-		"cmd": "create object person",
-		"payload": {}
-	}`;
-	
-	let obj;
-	const res = await fetch(url, {method: 'POST', body: data})
-	obj = await res.json();
-	console.log(obj)
-}
-
-
-async function new_object() {
 	var url = "127.0.0.1:6969";
 	var data = `{
-		"cmd": "create object new_person",
-		"payload": {}
+		"cmd": "upload",
+		"payload": {
+			"user": "st0rm",
+			"title": "Dynamics",
+			"description": "Notes of topic Dynamics",
+			"category": "Physics",
+			"content": []
+		}
 	}`;
 
 	let obj;
@@ -45,35 +28,81 @@ async function new_object() {
 	console.log(obj);
 }
 
-async function new_entry() {
+async function load() {
 	var url = "127.0.0.1:6969";
-
 	var data = `{
-		"cmd": "create entry ram in person",
-		"payload": {}
+		"cmd": "load",
+		"payload": {
+			"title": "Dynamics"
+		}
 	}`;
 
 	let obj;
-	const res = await fetch(url, {method: 'POST', body: data})
+	const res = await fetch(url, {
+		method: 'POST', 
+		headers: {
+			"Content-Type": "application/json",
+			"Accept": "application/json"
+		},
+		body: data
+	})
+
 	obj = await res.text();
 	obj = obj.replace(/["']/g, "\"");
 	obj = JSON.parse(obj);
 	console.log(obj);
 }
 
-async function update_entry() {
+async function query() {
 	var url = "127.0.0.1:6969";
-
 	var data = `{
-		"cmd": "update entry ram in person",
+		"cmd": "upload",
 		"payload": {
-			"age": 40,
-			"status": "employed"
+			"user": "st0rm",
+			"title": "Dynamics",
+			"description": "Notes of topic Dynamics",
+			"category": "Physics",
+			"content": []
 		}
 	}`;
 
 	let obj;
-	const res = await fetch(url, {method: 'POST', body: data})
+	const res = await fetch(url, {
+		method: 'POST', 
+		headers: {
+			"Content-Type": "application/json",
+			"Accept": "application/json"
+		},
+		body: data
+	})
+
+	obj = await res.text();
+	obj = obj.replace(/["']/g, "\"");
+	obj = JSON.parse(obj);
+	console.log(obj);
+}
+
+async function comment() {
+	var url = "127.0.0.1:6969";
+	var data = `{
+		"cmd": "comment",
+		"payload": {
+			"to": "Dynamics",
+			"from": "st0rm",
+			"content": "Cool!"
+		}
+	}`;
+
+	let obj;
+	const res = await fetch(url, {
+		method: 'POST', 
+		headers: {
+			"Content-Type": "application/json",
+			"Accept": "application/json"
+		},
+		body: data
+	})
+
 	obj = await res.text();
 	obj = obj.replace(/["']/g, "\"");
 	obj = JSON.parse(obj);

@@ -53,7 +53,7 @@ catergory = {
     "Comerce": ["asdasdas"...],
 }
 
-user = {
+users = {
     "rob": ["Science hw", ...]
 }
 

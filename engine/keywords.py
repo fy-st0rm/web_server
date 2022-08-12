@@ -1,14 +1,9 @@
 
 # Constants
-CREATE = "create"
-DELETE = "delete"
-UPDATE = "update"
-OBJECT = "object"
-ENTRY  = "entry"
-FROM   = "from"
-IN     = "in"
-
-PRIM_CMDS = [CREATE, DELETE, UPDATE]
+UPLOAD  = "upload"
+LOAD    = "load"
+QUERY   = "query"
+COMMENT = "comment"
 
 # HTTP keywords
 HEAD = b"head"
@@ -21,11 +16,12 @@ GET = "GET"
 POST = "POST"
 
 # HTTP file types
-sup_types = ["html", "css", "js", "jpg", "png"]
+sup_types = ["html", "css", "json", "js", "jpg", "png"]
 types = {
 	"html": b"text/html",
 	"css" : b"text/css",
 	"js"  : b"text/js",
+	"json": b"application/json",
 	"jpg" : b"image/jpeg",
 	"png" : b"image/png"
 }
