@@ -1,0 +1,60 @@
+
+# Query
+upload
+{
+    "username": "rob",
+    "title": "Title",
+    "content": [],
+    "description": asdf,
+    "catergory": "Science"
+}
+
+load
+{
+    "title": "title"
+}
+
+query
+{
+    "query": "searched title"
+}
+
+comment
+{
+    "to": "title",
+    "from": "username",
+    "content": "asdfasdf",
+    "date": asdfasdf,
+}
+
+
+
+# Database structure
+comment = {
+    "uid": {
+        "from": "usr",
+        "upvote": 0,
+        "solved": 0,
+        "content": "asdfasdfASDF",
+    }
+}
+
+post = {
+    "Science hw": {
+        "description": "Description",
+        "date": "Date",
+        "content": ["/images/img1", ...],
+        "comments": [uid...]
+        }
+}
+
+catergory = {
+    "science": ["Science hw", ....],
+    "Comerce": ["asdasdas"...],
+}
+
+user = {
+    "rob": ["Science hw", ...]
+}
+
+

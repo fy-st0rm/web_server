@@ -47,24 +47,6 @@ class Request_Engine:
 		""", encoding=FORMAT)
 		return html
 
-	def __load_img(self, req: dict) -> dict:
-		# Searching for images
-		img_regex = re.search(r"\{{([A-Za-z0-9_.]+)\}}", req["payload"])
-
-		# If image exists
-		if img_regex:
-			img_name = img_regex.group(1)
-
-			# Loading image as base64
-			with open(f"{WEB_DIR}/{img_name}", "rb") as f:
-				img_data = base64.b64encode(f.read()).decode("utf-8")
-
-			# Replace in the html
-			req["payload"] = req["payload"].replace(img_regex.group(0), img_data)
-			req.update({"Content-Length": len(req["payload"])})
-
-		return req
-
 	def __construct_bytes(self, req: dict) -> bytes:
 		# Converts json request to string
 		http_res = b""
@@ -119,7 +101,8 @@ class Request_Engine:
 				server_error(e)
 		return ret_req
 
-	def __post_handler(self, req: dict, ret_req: dict):
+	def __post_handler(self, req: dict) -> dict:
+		ret_req = {}
 		payload = req["payload"]
 
 		server_sucess(f"Payload received")
@@ -128,10 +111,10 @@ class Request_Engine:
 		qry = Query(payload["cmd"], payload["payload"])
 		res = self.database.query(qry)
 
-		ret_req.update({"head": f"HTTP/1.1 {res.status}"})
-		ret_req.update({"Content-Type": res.content_type})
-		ret_req.update({"Content-Length": res.content_len})
-		ret_req.update({"payload": res.payload})
+		ret_req.update({HEAD: f"HTTP/1.1 {res.status}".encode(FORMAT)})
+		ret_req.update({CONTENT_TYPE: res.content_type})
+		ret_req.update({CONTENT_LEN: res.content_len})
+		ret_req.update({PAYLOAD: res.payload})
 
 	def parse(self, req: dict) -> str:
 
@@ -139,7 +122,7 @@ class Request_Engine:
 		if req["request"] == GET:
 			ret_req = self.__get_handler(req)
 		elif req["request"] == POST:
-			self.__post_handler(req, ret_req)
+			ret_req = self.__post_handler(req)
 		else:
 			_req = req["request"]
 			ret_req.update({PAYLOAD: self.__get_error_html(f"Unknown request {_req}")})
