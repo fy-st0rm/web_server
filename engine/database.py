@@ -1,6 +1,8 @@
 from .config import *
 from .util   import *
 
+#TODO: System to download images
+
 
 class Database:
 	def __init__(self):
@@ -38,17 +40,19 @@ class Database:
 	def __create_objects(self):
 		if not os.path.exists(self.users_path):
 			json.dump(self.users, open(self.users_path, "w"))
+			server_sucess(f"Created new objects `{USERS}` on database directory: {self.data_path}.")
 
 		if not os.path.exists(self.category_path):
 			json.dump(self.category, open(self.category_path, "w"))
+			server_sucess(f"Created new objects `{CATEGORY}` on database directory: {self.data_path}.")
 
 		if not os.path.exists(self.posts_path):
 			json.dump(self.posts, open(self.posts_path, "w"))
+			server_sucess(f"Created new objects `{POSTS}` on database directory: {self.data_path}.")
 
 		if not os.path.exists(self.comments_path):
 			json.dump(self.comments, open(self.comments_path, "w"))
-
-		server_sucess(f"Created new objects on database directory: {self.data_path}.")
+			server_sucess(f"Created new objects `{COMMENTS}` on database directory: {self.data_path}.")
 
 	def __load_database(self):
 		self.users    = json.load(open(self.users_path, "r"))
