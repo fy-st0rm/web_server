@@ -1,5 +1,6 @@
 from engine.req_engine import *
 
+#TODO: Make this shit
 
 class Server:
 	def __init__(self, ip: str, port: int):
@@ -27,6 +28,7 @@ class Server:
 		while alive:
 			recv = conn.recv(1024).decode()
 			if recv:
+				print(recv)
 				req = self.http_parser.parse(recv)
 				res = self.req_engine.parse(req)
 				conn.send(res)

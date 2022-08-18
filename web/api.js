@@ -1,4 +1,4 @@
-class web_sv
+export class web_sv
 {
 	constructor(url)
 	{
@@ -34,7 +34,8 @@ class web_sv
 				"content": [${content}]
 			}
 		}`;
-		alert(data);
+		
+		console.log(this.url);
 		let obj;
 		const res = await fetch(this.url, {
 			method: 'POST', 
@@ -144,6 +145,7 @@ class web_sv
 	}
 }
 
+/*
 var web_svv;
 
 //sets universal url on startup
@@ -171,3 +173,4 @@ async function query_t() {
 async function comment_t() {
 	web_svv.comment("physics2", "FuNK", "you are gae");
 }
+*/

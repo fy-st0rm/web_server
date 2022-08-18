@@ -1,3 +1,5 @@
+import { web_sv } from "/api.js";
+
 const image_input = document.querySelector("#image_input");
 var uploaded_image = "";
 
@@ -10,9 +12,12 @@ image_input.addEventListener("change", function(){
 		var size = file.size;
 		var type = file.type;
 		var data = uploaded_image;
-		console.log(size);
-		console.log(type);
-		console.log(data);
+
+		// TODO: Implement image transfer
+		var content = [data];
+		var websv = new web_sv("http://localhost:50500/");
+		websv.upload("st0rm", "asdF", "Asdf", "asd", content);
+		
 	});
 	reader.readAsDataURL(this.files[0]);
 })

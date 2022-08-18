@@ -20,7 +20,7 @@ sup_types = ["html", "css", "json", "js", "jpg", "png"]
 types = {
 	"html": b"text/html",
 	"css" : b"text/css",
-	"js"  : b"text/js",
+	"js"  : b"text/javascript",
 	"json": b"application/json",
 	"jpg" : b"image/jpeg",
 	"png" : b"image/png"
