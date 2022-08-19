@@ -63,3 +63,15 @@ load.addEventListener("click", async function() {
 	console.log(res);
 })
 
+const query = document.querySelector("#query");
+query.addEventListener("click", async function() {
+	var res = await websv.query("query_by_amt", 5);
+	res = res["data"];
+	console.log(res);
+	for (let i = 0; i < res.length; i++)
+	{
+		var res_2 = await websv.load(res[i]);
+		console.log(res_2);
+	}
+})
+

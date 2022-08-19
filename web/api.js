@@ -145,24 +145,16 @@ export class WebSV
 		return obj;
 	}
 
-	async query(user, title, description, category, content)
+	async query(cmd, arg)
 	{
-		var user = user;
-		var title = title;
-		var description = description;
-		var category = category;
-		var content = content;
-
-		var content =  this.parse(content);
+		var cmd = cmd;
+		var arg = arg;
 
 		var data = `{
-			"cmd": "upload",
+			"cmd": "query",
 			"payload": {
-				"user": "${user}",
-				"title": "${title}",
-				"description": "${description}",
-				"category": "${category}",
-				"content": [${content}]
+				"cmd": "${cmd}",
+				"arg": "${arg}"
 			}
 		}`;
 

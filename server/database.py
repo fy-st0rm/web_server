@@ -138,7 +138,18 @@ class Database:
 			return Result("400 Not found", types["json"].decode(FORMAT), {"log": f"Cannot find the post with uid `{uid}`."})
 
 	def __handle_query(self, qry: Query) -> Result:
-		pass
+		cmd     = qry.payload["cmd"]
+		payload = qry.payload["arg"]
+
+		if cmd == QUERY_BY_AMT:
+			amt = int(payload)
+			keys = list(self.posts.keys())[:amt]
+			result = Result("200 OK", types["json"].decode(FORMAT), {"log": f"Sucessfully queried.", "data": keys})
+			return result
+
+		elif cmd == QUERY_BY_NAME:
+			result = Result("200 OK", types["json"].decode(FORMAT), {"log": f"Not implemented yet."})
+			return result
 
 	def __handle_comment(self, qry: Query) -> Result:
 		payload = qry.payload
