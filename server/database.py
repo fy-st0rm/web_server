@@ -1,8 +1,6 @@
 from .config import *
 from .util   import *
 
-#TODO: System to download images
-
 
 class Database:
 	def __init__(self):
@@ -95,10 +93,12 @@ class Database:
 		content     = payload["content"]
 
 		# Creating a new post
-		if title in self.posts: return Result("400 Failed", types["json"].decode(FORMAT), {"log": f"Post with title `{title}` already exists."})
+		uid = str(uuid.uuid4())
+		while uid in self.posts: uid = str(uuid.uuid4())
 
 		self.posts.update({
-			title: {
+			uid: {
+				"title": title,
 				"description": description,
 				"date": str(datetime.datetime.now()),
 				"content": content,
@@ -109,11 +109,11 @@ class Database:
 		# Adding it to the users list
 		#TODO: Remove this when adding loging system
 		if user  not in self.users: self.users.update({user: []})
-		if title not in self.users[user]: self.users[user].append(title)
+		if title not in self.users[user]: self.users[user].append(uid)
 
 		# Adding it to the category
 		if category not in self.category: self.category.update({category: []})
-		if title    not in self.category[category]: self.category[category].append(title)
+		if title    not in self.category[category]: self.category[category].append(uid)
 
 		# Saving in different thread
 		save_thread = threading.Thread(target = self.__save_database)
@@ -126,16 +126,16 @@ class Database:
 		payload = qry.payload
 
 		# Extracting data
-		title = payload["title"]
+		uid = payload["uid"]
 
 		# Loading from memory
-		if title in self.posts:
-			response = self.posts[title]
+		if uid in self.posts:
+			response = self.posts[uid]
 			comments = response["comment"]
 			response["comment"] = [self.comments[i] for i in comments]
 			return Result("200 OK", types["json"].decode(FORMAT), response)
 		else:
-			return Result("400 Not found", types["json"].decode(FORMAT), {"log": f"Cannot find the post with title `{title}`."})
+			return Result("400 Not found", types["json"].decode(FORMAT), {"log": f"Cannot find the post with uid `{title}`."})
 
 	def __handle_query(self, qry: Query) -> Result:
 		pass

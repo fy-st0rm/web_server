@@ -1,7 +1,5 @@
 from .req_engine import *
 
-#TODO: Make this shit
-
 class Server:
 	def __init__(self, ip: str, port: int):
 		self.ip = ip

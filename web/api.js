@@ -131,13 +131,13 @@ export class WebSV
 		return obj;
 	}
 
-	async load(title){
-		var title = title;
+	async load(uid){
+		var uid = uid;
 
 		var data = `{
 			"cmd": "load",
 			"payload": {
-				"title": "${title}"
+				"uid": "${uid}"
 			}
 		}`;
 		
