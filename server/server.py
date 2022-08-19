@@ -33,9 +33,11 @@ class Server:
 		meta_lines = meta_lines.split("\r\n")
 		cmd_line = meta_lines.pop(0)
 		cmd_line = cmd_line.split(" ")
-		req = cmd_line[0]
+		req  = cmd_line[0]
+		path = cmd_line[1]
 
-		if req == POST:
+		# Calculate this only if the sent request is of image
+		if req == POST and path == IMAGE:
 			if len(recv) < HTTP_BUFF:
 				self.temp_buff = recv
 				return False

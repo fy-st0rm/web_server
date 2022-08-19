@@ -48,3 +48,18 @@ submit.addEventListener("click", async function() {
 })
 */
 
+import { websv } from "/config.js";
+
+const upload = document.querySelector("#upload");
+upload.addEventListener("click", async function() {
+	var content_t = ["this is another content"];
+	var res = await websv.upload("st0rm", "Numericals", "Dynamics numericals", "physics", content_t);
+	console.log(res);
+})
+
+const load = document.querySelector("#load");
+load.addEventListener("click", async function() {
+	var res = await websv.load("27cf8433-bdb9-4ac3-8531-957d9e07da6f");
+	console.log(res);
+})
+

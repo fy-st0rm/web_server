@@ -109,11 +109,11 @@ class Database:
 		# Adding it to the users list
 		#TODO: Remove this when adding loging system
 		if user  not in self.users: self.users.update({user: []})
-		if title not in self.users[user]: self.users[user].append(uid)
+		if uid   not in self.users[user]: self.users[user].append(uid)
 
 		# Adding it to the category
 		if category not in self.category: self.category.update({category: []})
-		if title    not in self.category[category]: self.category[category].append(uid)
+		if uid      not in self.category[category]: self.category[category].append(uid)
 
 		# Saving in different thread
 		save_thread = threading.Thread(target = self.__save_database)
@@ -135,7 +135,7 @@ class Database:
 			response["comment"] = [self.comments[i] for i in comments]
 			return Result("200 OK", types["json"].decode(FORMAT), response)
 		else:
-			return Result("400 Not found", types["json"].decode(FORMAT), {"log": f"Cannot find the post with uid `{title}`."})
+			return Result("400 Not found", types["json"].decode(FORMAT), {"log": f"Cannot find the post with uid `{uid}`."})
 
 	def __handle_query(self, qry: Query) -> Result:
 		pass

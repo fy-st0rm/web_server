@@ -81,20 +81,29 @@ class Request_Engine:
 				ret_req.update({HEAD: bytes(f"HTTP/1.1 500 Failed to open {ROOT_FILE}", encoding=FORMAT)})
 
 		else:
-			path = req["path"]
+			path = req["path"][1:]
 
 			try:
-				ext = path.split(".")[-1]
-				full_path = f"{WEB_DIR}{path}"
-				if ext not in sup_types: raise Exception(f"Extension: {ext} is not supported yet.")
+				if path in self.database.posts:
+					qry = Query(LOAD, {"uid": path})
+					res = self.database.query(qry)
 
-				with open(full_path, "rb") as f:
-					content = f.read()
+					ret_req.update({HEAD: f"HTTP/1.1 {res.status}".encode(FORMAT)})
+					ret_req.update({CONTENT_TYPE: res.content_type})
+					ret_req.update({CONTENT_LEN: res.content_len})
+					ret_req.update({PAYLOAD: res.payload})
+				else:
+					ext = path.split(".")[-1]
+					full_path = f"{WEB_DIR}/{path}"
+					if ext not in sup_types: raise Exception(f"Extension: {ext} is not supported yet.")
 
-				ret_req.update({HEAD: b"HTTP/1.1 200 OK"})
-				ret_req.update({PAYLOAD: content})
-				ret_req.update({CONTENT_LEN: f"{os.path.getsize(full_path)}".encode(FORMAT)})
-				ret_req.update({CONTENT_TYPE: types[ext]})
+					with open(full_path, "rb") as f:
+						content = f.read()
+
+					ret_req.update({HEAD: b"HTTP/1.1 200 OK"})
+					ret_req.update({PAYLOAD: content})
+					ret_req.update({CONTENT_LEN: f"{os.path.getsize(full_path)}".encode(FORMAT)})
+					ret_req.update({CONTENT_TYPE: types[ext]})
 
 			except Exception as e:
 				# If failed to open the sugessted file
