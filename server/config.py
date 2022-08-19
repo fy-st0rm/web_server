@@ -7,9 +7,15 @@ import sys
 import time
 import datetime
 import uuid
+import base64
 
 from .keywords import *
 
+# Buffer sizes
+RECV_BUFF = 50_000
+HTTP_BUFF = 40_000
+
+# Encoding format
 FORMAT = "utf-8"
 
 # Directory where the websites lies

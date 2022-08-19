@@ -1,23 +1,47 @@
-import { web_sv } from "/api.js";
+import { WebSV } from "/api.js";
+
+var websv = new WebSV("http://localhost:6969");
 
 const image_input = document.querySelector("#image_input");
 var uploaded_image = "";
 
+function append_image(images)
+{
+	const div = document.getElementById("image");
+	for (let i = 0; i < images.length; i++)
+	{
+		const img = document.createElement("img");
+		img.src = "image/" + images[i];
+		div.appendChild(img);
+	}
+}
+
+
+async function upload(images)
+{
+	var img_ids = await websv.upload_image(images);
+	console.log(img_ids);
+	append_image(img_ids);
+}
+
 image_input.addEventListener("change", function(){
-	const reader = new FileReader();
-	reader.addEventListener("load", () => {
-		uploaded_image = reader.result;
+	var images = [];
+	var len = this.files.length
+	for (let i = 0; i < len; i++)
+	{
+		var reader = new FileReader();  
+		reader.onload = function(e) {
+			var bin = e.target.result;
+			images.push(bin);
+			if (images.length == len) upload(images);
+		}
+		reader.readAsDataURL(this.files[i]);
+	}
+})
 
-		var file = this.files[0];
-		var size = file.size;
-		var type = file.type;
-		var data = uploaded_image;
-
-		// TODO: Implement image transfer
-		var content = [data];
-		var websv = new web_sv("http://localhost:50500/");
-		websv.upload("st0rm", "asdF", "Asdf", "asd", content);
-		
-	});
-	reader.readAsDataURL(this.files[0]);
+const submit = document.querySelector("#submit");
+submit.addEventListener("click", async function() {
+	var content_t = ["this is a content", "this is another content"];	
+	var res = await websv.upload("st0rm2", "physics2","can anyone help me solve this","science2",content_t);
+	console.log(res);
 })

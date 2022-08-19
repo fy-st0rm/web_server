@@ -1,15 +1,24 @@
 
+CONTINUE = "continue"
+END = "end"
+
+# Endpoints
+IMAGE    = "/image"
+DATABASE = "/database"
+
 # Constants
 UPLOAD  = "upload"
 LOAD    = "load"
 QUERY   = "query"
 COMMENT = "comment"
+SV_IMG  = "sv_img"
 
 # HTTP keywords
-HEAD = b"head"
-PAYLOAD = b"payload"
+HEAD         = b"head"
+PAYLOAD      = b"payload"
 CONTENT_TYPE = b"content-type"
-CONTENT_LEN = b"content-length"
+CONTENT_LEN  = b"content-length"
+CONNECTION   = b"Connection"
 
 # HTTP Request constants
 GET = "GET"

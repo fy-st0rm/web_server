@@ -1,4 +1,4 @@
-from engine.req_engine import *
+from .req_engine import *
 
 #TODO: Make this shit
 
@@ -8,6 +8,8 @@ class Server:
 		self.port = port
 		self.running = True
 		self.__create_sv()
+
+		self.temp_buff = ""
 
 		# Engine
 		self.http_parser = HTTP_Parser()
@@ -23,12 +25,39 @@ class Server:
 			server_error(f"Failed to start server.\nReason: {e}")
 			quit()
 
+	# Function to resolve incomplete request
+	def __resolve(self, recv: str) -> bool:
+		# Splits lines
+		lines = recv.split("\r\n")
+		meta_lines = lines[0]
+
+		# Parsing the first line to get the request type
+		meta_lines = meta_lines.split("\r\n")
+		cmd_line = meta_lines.pop(0)
+		cmd_line = cmd_line.split(" ")
+		req = cmd_line[0]
+
+		if req == POST:
+			if len(recv) < HTTP_BUFF:
+				self.temp_buff = recv
+				return False
+			else:
+				self.temp_buff = ""
+
+		return True
+
 	def __conn_handler(self, conn: socket.socket):
 		alive = True
 		while alive:
-			recv = conn.recv(1024).decode()
+			recv = conn.recv(RECV_BUFF).decode()
 			if recv:
-				print(recv)
+				if self.temp_buff:
+					self.temp_buff += recv
+					recv = self.temp_buff
+
+				if not self.__resolve(recv):
+					continue
+
 				req = self.http_parser.parse(recv)
 				res = self.req_engine.parse(req)
 				conn.send(res)
@@ -46,8 +75,4 @@ class Server:
 			server_sucess(f"{addr} connected.")
 			new_thread = threading.Thread(target = self.__conn_handler, args = (conn,))
 			new_thread.start()
-
-if __name__ == "__main__":
-	server = Server("127.0.0.1", 6969)
-	server.start()
 

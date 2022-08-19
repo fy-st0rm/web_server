@@ -36,6 +36,7 @@ class HTTP_Parser:
 class Request_Engine:
 	def __init__(self):
 		self.database = Database()
+		self.img_data = ""
 
 	def __get_error_html(self, error: str) -> bytes:
 		html = bytes(f"""
@@ -54,6 +55,7 @@ class Request_Engine:
 		payload = req.pop(PAYLOAD)
 
 		http_res += head
+		http_res += b"Access-Control-Allow-Origin: *\r\n"
 		for key in req:
 			http_res += key + b": " + req[key] + b"\r\n" 
 
@@ -103,18 +105,49 @@ class Request_Engine:
 
 	def __post_handler(self, req: dict) -> dict:
 		ret_req = {}
-		payload = req["payload"]
 
-		qry = Query(payload["cmd"], payload["payload"])
-		res = self.database.query(qry)
+		if req["path"] == "/image":
+			if "payload" in req:
+				payload = req["payload"]
+				status  = payload["status"]
+				padd    = payload["padding"]
+				data    = payload["data"]
 
-		ret_req.update({HEAD: f"HTTP/1.1 {res.status}".encode(FORMAT)})
-		ret_req.update({CONTENT_TYPE: res.content_type})
-		ret_req.update({CONTENT_LEN: res.content_len})
-		ret_req.update({PAYLOAD: res.payload})
-		return ret_req
+				self.img_data += data
+				if status == "end":
+					qry = Query(SV_IMG, {"data": self.img_data})
+					res = self.database.query(qry)
+					self.img_data = ""
+
+					ret_req.update({HEAD: f"HTTP/1.1 {res.status}".encode(FORMAT)})
+					ret_req.update({CONTENT_TYPE: res.content_type})
+					ret_req.update({CONTENT_LEN: res.content_len})
+					ret_req.update({PAYLOAD: res.payload})
+					return ret_req
+
+			content = {"log": "OK"}
+			ret_req.update({PAYLOAD: f"{content}".encode(FORMAT)})
+			ret_req.update({HEAD: f"HTTP/1.1 OK".encode(FORMAT)})
+			ret_req.update({CONTENT_TYPE: types["json"]})
+			ret_req.update({CONTENT_LEN: f"{len(ret_req[PAYLOAD])}".encode(FORMAT)})
+			ret_req.update({CONNECTION: b"keep-alive"})
+			return ret_req
+
+		elif req["path"] == "/database":
+			payload = req["payload"]
+
+			qry = Query(payload["cmd"], payload["payload"])
+			res = self.database.query(qry)
+
+			ret_req.update({HEAD: f"HTTP/1.1 {res.status}".encode(FORMAT)})
+			ret_req.update({CONTENT_TYPE: res.content_type})
+			ret_req.update({CONTENT_LEN: res.content_len})
+			ret_req.update({PAYLOAD: res.payload})
+		
+			return ret_req
 
 	def parse(self, req: dict) -> str:
+		ret_req = {}
 
 		# Get request handler
 		if req["request"] == GET:

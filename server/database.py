@@ -69,6 +69,21 @@ class Database:
 		json.dump(self.comments, open(self.comments_path, "w"), indent=4)
 		server_sucess("Backedup database.")
 
+	def __save_image(self, qry: Query) -> Result:
+		# Saves image into a database
+		img_data = qry.payload["data"]
+		uid = str(uuid.uuid4()) + ".png"
+		while True:
+			try:
+				open(f"{self.img_path}/{uid}")
+			except FileNotFoundError:
+				break
+
+		with open(f"{self.img_path}/{uid}", "wb") as f:
+			f.write(base64.decodebytes(img_data.encode()))
+
+		return Result("200 Stored", types["json"].decode(FORMAT), {"id": uid})
+
 	def __handle_upload(self, qry: Query) -> Result:
 		payload = qry.payload
 
@@ -170,5 +185,7 @@ class Database:
 			return self.__handle_query(qry)
 		elif qry.cmd == COMMENT:
 			return self.__handle_comment(qry)
+		elif qry.cmd == SV_IMG:
+			return self.__save_image(qry)
 
 

@@ -1,20 +1,113 @@
-export class web_sv
+
+export class WebSV
 {
 	constructor(url)
 	{
 		this.url = url;
+		this.buff_sz = 40_000;
 	}
 
-	prase(content)
+	// Function to parse strings
+	parse(content)
 	{
-		var content = content;		
+		var content = content;
 		var content_temp = content.toString();
 		var content = content_temp.replace(/,/g, '","');
 		var content = '"' + content + '"';
 		return content;
 	}
 
-	async  upload(user, title, description, category, content)
+	// Convert string to json
+	to_json(text)
+	{
+		let obj = text;
+		obj = obj.replace(/["']/g, "\"");
+		obj = JSON.parse(obj);
+		return obj;
+	}
+
+	// Constructs chunks out of images of required sizes
+	construct_chunks(data, sz)
+	{
+		// Calculates the padding needed
+		var padd = sz - (data.length % sz);
+		data = data.concat(" ".repeat(padd));
+
+		const chunks = [];
+		var amt = data.length / sz;
+		var start = 0;
+		
+		// Generates the chunks
+		for (let i = 0; i < amt; i++)
+		{
+			chunks.push(data.slice(start, start + sz));
+			start += sz;
+		}
+		return [chunks, padd];
+	}
+
+	// Image sending functions
+	async upload_image(images)
+	{
+		var img_ids = [];
+		var sz = images.length;
+		for (let i = 0; i < sz; i++)
+		{
+			var image = images[i];
+
+			// Generating chunks for each images
+			image = image.split(",")
+			var data   = this.construct_chunks(image[1], this.buff_sz);
+			var chunks = data[0];
+			var padd   = data[1];
+			var c_len  = chunks.length;
+
+			// Circling through every chunk and sending it to the server
+			for (let j = 0; j < c_len; j++) 
+			{
+				var stat = "continue";
+				if (j == c_len - 1) stat = "end";
+
+				// Creating a post request for image
+				var payload = `{
+					"status": "${stat}",
+					"padding": "${padd}",
+					"data": "${chunks[j]}"
+				}`;
+
+				var res = await fetch(this.url + "/image", {
+					method: 'POST', 
+					headers: {
+						"Content-Type": "text/plain",
+						"Accept": "application/json",
+					},
+					body: payload
+				});
+
+				let obj = this.to_json(await res.text());
+				if ("id" in obj)
+					img_ids.push(obj["id"]);
+			}
+		}
+		return img_ids;
+	}
+
+	// Server interaction functions
+	async send(data)
+	{
+		const res = await fetch(this.url + "/database", {
+			method: 'POST', 
+			headers: {
+				"Content-Type": "text/plain",
+				"Accept": "application/json"
+			},
+			body: data
+		})
+		let obj = this.to_json(await res.text());
+		return obj;
+	}
+
+	async upload(user, title, description, category, content)
 	{
 		var user = user;
 		var title = title;
@@ -22,7 +115,7 @@ export class web_sv
 		var category = category;
 		var content = content;
 
-		var content = this.prase(content);
+		var content = this.parse(content);
 
 		var data = `{
 			"cmd": "upload",
@@ -34,21 +127,8 @@ export class web_sv
 				"content": [${content}]
 			}
 		}`;
-		
-		console.log(this.url);
-		let obj;
-		const res = await fetch(this.url, {
-			method: 'POST', 
-			headers: {
-				"Content-Type": "application/json",
-				"Accept": "application/json"
-			},
-			body: data
-		})
-		obj = await res.text();
-		obj = obj.replace(/["']/g, "\"");
-		obj = JSON.parse(obj);
-		console.log(obj);
+		let obj = this.send(data);
+		return obj;
 	}
 
 	async load(title){
@@ -60,20 +140,9 @@ export class web_sv
 				"title": "${title}"
 			}
 		}`;
-
-		let obj;
-		const res = await fetch(this.url, {
-			method: 'POST', 
-			headers: {
-				"Content-Type": "application/json",
-				"Accept": "application/json"
-			},
-			body: data
-		})
-		obj = await res.text();
-		obj = obj.replace(/["']/g, "\"");
-		obj = JSON.parse(obj);
-		console.log(obj);
+		
+		let obj = this.send(data);
+		return obj;
 	}
 
 	async query(user, title, description, category, content)
@@ -84,7 +153,7 @@ export class web_sv
 		var category = category;
 		var content = content;
 
-		var content =  this.prase(content);
+		var content =  this.parse(content);
 
 		var data = `{
 			"cmd": "upload",
@@ -97,20 +166,8 @@ export class web_sv
 			}
 		}`;
 
-		let obj;
-		const res = await fetch(this.url, {
-			method: 'POST', 
-			headers: {
-				"Content-Type": "application/json",
-				"Accept": "application/json"
-			},
-			body: data
-		})
-
-		obj = await res.text();
-		obj = obj.replace(/["']/g, "\"");
-		obj = JSON.parse(obj);
-		console.log(obj);
+		let obj = this.send(data);
+		return obj;
 	}
 
 	async comment(to, from, content)
@@ -128,49 +185,8 @@ export class web_sv
 			}
 		}`;
 
-		let obj;
-		const res = await fetch(this.url, {
-			method: 'POST', 
-			headers: {
-				"Content-Type": "application/json",
-				"Accept": "application/json"
-			},
-			body: data
-		})
-
-		obj = await res.text();
-		obj = obj.replace(/["']/g, "\"");
-		obj = JSON.parse(obj);
-		console.log(obj);
+		let obj = this.send(data);
+		return obj;
 	}
 }
 
-/*
-var web_svv;
-
-//sets universal url on startup
-window.onload =   function windowLoad()
-{
-	web_svv =  new web_sv("127.0.0.1:6969");
-}
-
-async function upload_t() {
-	// test upload stuff
-	var content_t = ["this is a content", "this is another content"];	
-	web_svv.upload("st0rm2", "physics2","can anyone help me solve this","science2",content_t);
-}
-
-async function load_t(){
-	// test  loading stuff
-	web_svv.load("physics2");
-}
-
-async function query_t() {		
-	var content_t = ["this is a content", "this is another content"];	
-	web_svv.query("st0rm2", "physics2","can anyone help me yeah solve this","science2",content_t);
-}
-
-async function comment_t() {
-	web_svv.comment("physics2", "FuNK", "you are gae");
-}
-*/
