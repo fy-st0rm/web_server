@@ -1,10 +1,10 @@
 
 export class WebSV
 {
-	constructor(url)
+	constructor(url, buff_sz)
 	{
 		this.url = url;
-		this.buff_sz = 40_000;
+		this.buff_sz = buff_sz;
 	}
 
 	// Function to parse strings

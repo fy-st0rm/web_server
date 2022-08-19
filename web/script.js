@@ -1,3 +1,4 @@
+/*
 import { WebSV } from "/api.js";
 
 var websv = new WebSV("http://localhost:6969");
@@ -45,3 +46,5 @@ submit.addEventListener("click", async function() {
 	var res = await websv.upload("st0rm2", "physics2","can anyone help me solve this","science2",content_t);
 	console.log(res);
 })
+*/
+
