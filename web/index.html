@@ -1,15 +1,37 @@
 <html>
 <head>
-	<title> Home </title>
+	<title> Hamro Notes : Home</title>
 
+	<!-- IMPORTING JS FILES-->
 	<script type="module" src="api.js"></script>
 	<script type="module" src="config.js"></script>
+
+	<!-- IMPORTING TAILWIND CSS-->
+	<link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet">
 </head>
 
-<body>
-	<input type="submit" id="upload" value="Upload"><br>
-	<input type="submit" id="load"   value="Load"><br>
-	<input type="submit" id="query"  value="Query"><br>
+<!-- TOPBAR SECTION-->
+<body class="" style="background-color: #262626;">
+	<div id = "topbar" class = "" style = "position: fixed; width: 100%; height: 60px; background-color: #262626;">
+		<div id  = "items" class = "flex justify-center py-5 px-2">
+			<input type="textbox" placeholder = "search solutions" class = "rounded p-3 text-white" style = "height: 30px; width: 30%; background-color: #383838; outline: 1px ">
+		</div>
+		<div style="position: fixed; top: 10; left: 2%;">
+			<h1 class="font-bold text-2xl text-white" style="">Hamro Notes</h1>
+		</div>	
+	</div>
+
+<!-- UPLOAD SECTION -->
+	<div id = "upload_sec" class="pt-40 flex justify-center ">
+		<div class="rounded-lg py-10 flex justify-center" style="width: 80%; height: 20%; background-color: #7655fa; ">
+			<h1 class="text-xl text-white">Upload Question &nbsp;</h1>
+			<input type="" name="" class="rounded-lg px-2 outline-none text-white" placeholder="question title here" id = "title" style="width: 50%; background-color: #262626;">
+			<input type="" name="" class="rounded-lg px-2 outline-none text-white" placeholder="question description here" id = "description" style="width: 50%; background-color: #262626;">
+			<button class="text-white rounded-full text-md font-bold py-2 px-4 " id = "upload"style="background-color: #661acf;"> next</button>
+		</div>
+	</div>
+
+	<!-- IMPORTING JS FILES-->
 	<script type="module" src="script.js"></script>
 </body>
 </html>
