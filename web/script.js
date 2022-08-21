@@ -55,7 +55,7 @@ import { sv_url } from "/config.js";
 
 
 /*post displayer stuff */
-async function additems(title, description, date, data) {
+async function additems(title, description, date, category, data) {
 
 	/* ---- MAIN DIV ---- */
 	var posts = document.createElement("div");
@@ -74,9 +74,13 @@ async function additems(title, description, date, data) {
 
 	/* ---- POST DESCRIPTION ---- */
 	const post_description = document.createElement("H4");
-	post_description.className = "font-bold text-l pl-3";
+	post_description.className = "font-bold text-l pl-3 pr-3";
 	post_description.style.cssText = "color: grey;";
-	const description_text = document.createTextNode(description.substr(0,10) + "..");
+	var dots = "..."
+	if(description.length < 20){
+		dots = " ";
+	}
+	const description_text = document.createTextNode(description.substr(0,20) + dots);
 	post_description.appendChild(description_text);
 
 	/* ---- VIEWMORE BUTTON ---- */
@@ -92,13 +96,28 @@ async function additems(title, description, date, data) {
 
 	/* ---- DATE SECTION ---- */
 	const  post_date = document.createElement("H4");
-	post_date.className = "font-bold text-l pl-3 text-green-300";
-	const date_text = document.createTextNode( "Date Added: "+ date);
+	post_date.className = "font-bold text-l pl-3 pr-3";
+	post_date.style.cssText = "color: grey;";
+	const date_text = document.createTextNode("• " + date.substr(0,10));
 	post_date.appendChild(date_text);
+
+	/* ---- CATEGORY BUTTON ---- */
+	const category_button = document.createElement("button");
+	category_button.innerHTML = category;
+	category_button.className = "text-white rounded-full p-1 bg-red-300";
+
+	// redirects to post page
+	category_button.addEventListener("click", function () {
+		alert("pressed");
+	})
+
+
+		
 
 	/* ---- APPENDING STUFF ---- */
 	post_div.appendChild(post_title);
 	post_div.appendChild(post_description);
+	post_div.appendChild(category_button);
 	post_div.appendChild(post_button);
 	post_div.appendChild(post_date);
 	posts.appendChild(post_div);
@@ -115,7 +134,7 @@ window.onload = async function WindowLoad(event)
 	for (let i = 0; i < res.length; i++)
 	{
 		var res_2 = await websv.load(res[i]);
-		additems(res_2["title"], res_2["description"], res_2["date"], res[i]);
+		additems(res_2["title"], res_2["description"], res_2["date"], res_2["category"], res[i]);
 	}
 }
 
@@ -144,7 +163,6 @@ query.addEventListener("click", async function() {
 	for (let i = 0; i < res.length; i++)
 	{
 		var res_2 = await websv.load(res[i]);
-		console.log(res_2);
 	}
 	
 })
