@@ -142,6 +142,8 @@ class Database:
 		cmd     = qry.payload["cmd"]
 		payload = qry.payload["arg"]
 
+		# TODO: Add QUERY_BY_USER command
+
 		if cmd == QUERY_BY_AMT:
 			amt = int(payload)
 			keys = list(self.posts.keys())[:amt]
@@ -149,7 +151,25 @@ class Database:
 			return result
 
 		elif cmd == QUERY_BY_NAME:
-			result = Result("200 OK", types["json"].decode(FORMAT), {"log": f"Not implemented yet."})
+			uid   = list(self.posts.keys())
+			res   = []
+
+			for i in uid:
+				if payload in self.posts[i]["title"]:
+					res.append(i)
+
+			if res:
+				result = Result("200 OK", types["json"].decode(FORMAT), {"log": f"Sucessfully queried", "data": res})
+			else:
+				result = Result("500 BAD", types["json"].decode(FORMAT), {"log": f"Couldn`t find the result for `{payload}`."})
+			return result
+
+		elif cmd == QUERY_BY_CAT:
+			if payload in self.category:
+				res = self.category[payload]
+				result = Result("200 OK", types["json"].decode(FORMAT), {"log": f"Sucessfully queried", "data": res})
+			else:
+				result = Result("500 BAD", types["json"].decode(FORMAT), {"log": f"Couldn`t find the category `{payload}`."})
 			return result
 
 	def __handle_comment(self, qry: Query) -> Result:

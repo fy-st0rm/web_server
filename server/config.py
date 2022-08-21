@@ -28,7 +28,7 @@ DATABASE_DIR = ".sv_data"
 
 # Objects
 USERS     = "users.json"
-CATEGORY = "category.json"
+CATEGORY  = "category.json"
 POSTS     = "posts.json"
 COMMENTS  = "comments.json"
 

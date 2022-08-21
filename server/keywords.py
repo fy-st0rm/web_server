@@ -14,8 +14,10 @@ COMMENT = "comment"
 SV_IMG  = "sv_img"
 
 # Query commands
-QUERY_BY_AMT = "query_by_amt"
+QUERY_BY_AMT  = "query_by_amt"
 QUERY_BY_NAME = "query_by_name"
+QUERY_BY_CAT  = "query_by_cat"
+QUERY_BY_USER = "query_by_user"
 
 # HTTP keywords
 HEAD         = b"head"

@@ -111,9 +111,6 @@ async function additems(title, description, date, category, data) {
 		alert("pressed");
 	})
 
-
-		
-
 	/* ---- APPENDING STUFF ---- */
 	post_div.appendChild(post_title);
 	post_div.appendChild(post_description);
@@ -128,7 +125,7 @@ async function additems(title, description, date, category, data) {
 /* --- QUERY STUFF */
 window.onload = async function WindowLoad(event)
 {
-	var res = await websv.query("query_by_amt", 5);
+	var res = await websv.query("query_by_cat", "physics");
 	res = res["data"];
 	console.log(res);
 	for (let i = 0; i < res.length; i++)
@@ -147,26 +144,5 @@ upload.addEventListener("click", async function() {
 	var res = await websv.upload("st0rm", title_data, discription_data, "physics", content_t);
 	console.log(res);
 })
-
-
-const load = document.querySelector("#load");
-load.addEventListener("click", async function() {
-	var res = await websv.load("27cf8433-bdb9-4ac3-8531-957d9e07da6f");
-	console.log(res);
-})
-
-const query = document.querySelector("#query");
-query.addEventListener("click", async function() {
-	var res = await websv.query("query_by_amt", 5);
-	res = res["data"];
-	console.log(res);
-	for (let i = 0; i < res.length; i++)
-	{
-		var res_2 = await websv.load(res[i]);
-	}
-	
-})
-
-
 
 
