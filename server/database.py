@@ -102,6 +102,7 @@ class Database:
 				"description": description,
 				"date": str(datetime.datetime.now()),
 				"content": content,
+				"category": category,
 				"comment": []
 			}
 		})
