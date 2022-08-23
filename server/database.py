@@ -142,6 +142,9 @@ class Database:
 		cmd     = qry.payload["cmd"]
 		payload = qry.payload["arg"]
 
+		# TODO: Queue by time
+		# TODO: Queue by stared
+
 		# Query database according to amount of result wanted
 		if cmd == QUERY_BY_AMT:
 			amt = int(payload)
