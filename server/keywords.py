@@ -27,7 +27,7 @@ CONTENT_LEN  = b"content-length"
 CONNECTION   = b"Connection"
 
 # HTTP Request constants
-GET = "GET"
+GET  = "GET"
 POST = "POST"
 
 # HTTP file types

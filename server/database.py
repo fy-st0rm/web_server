@@ -142,14 +142,14 @@ class Database:
 		cmd     = qry.payload["cmd"]
 		payload = qry.payload["arg"]
 
-		# TODO: Add QUERY_BY_USER command
-
+		# Query database according to amount of result wanted
 		if cmd == QUERY_BY_AMT:
 			amt = int(payload)
 			keys = list(self.posts.keys())[:amt]
 			result = Result("200 OK", types["json"].decode(FORMAT), {"log": f"Sucessfully queried.", "data": keys})
 			return result
 
+		# Query database according to the searched result
 		elif cmd == QUERY_BY_NAME:
 			uid   = list(self.posts.keys())
 			res   = []
@@ -164,12 +164,22 @@ class Database:
 				result = Result("500 BAD", types["json"].decode(FORMAT), {"log": f"Couldn`t find the result for `{payload}`."})
 			return result
 
+		# Query database according to the category
 		elif cmd == QUERY_BY_CAT:
 			if payload in self.category:
 				res = self.category[payload]
 				result = Result("200 OK", types["json"].decode(FORMAT), {"log": f"Sucessfully queried", "data": res})
 			else:
 				result = Result("500 BAD", types["json"].decode(FORMAT), {"log": f"Couldn`t find the category `{payload}`."})
+			return result
+
+		# Query database according to the user
+		elif cmd == QUERY_BY_USER:
+			if payload in self.users:
+				res = self.users[payload]
+				result = Result("200 OK", types["json"].decode(FORMAT), {"log": f"Sucessfully queried", "data": res})
+			else:
+				result = Result("500 BAD", types["json"].decode(FORMAT), {"log": f"User with name `{payload}` doesn`t exists."})
 			return result
 
 	def __handle_comment(self, qry: Query) -> Result:

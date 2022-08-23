@@ -125,7 +125,7 @@ async function additems(title, description, date, category, data) {
 /* --- QUERY STUFF */
 window.onload = async function WindowLoad(event)
 {
-	var res = await websv.query("query_by_cat", "physics");
+	var res = await websv.query("query_by_name", "test");
 	res = res["data"];
 	console.log(res);
 	for (let i = 0; i < res.length; i++)
