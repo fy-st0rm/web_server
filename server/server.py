@@ -1,5 +1,7 @@
 from .req_engine import *
 
+#TODO: Image upload might not work with multiple user at same time. Fix it.
+
 class Server:
 	def __init__(self, ip: str, port: int):
 		self.ip = ip

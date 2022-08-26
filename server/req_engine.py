@@ -56,6 +56,8 @@ class Request_Engine:
 
 		http_res += head
 		http_res += b"Access-Control-Allow-Origin: *\r\n"
+		http_res += b"Connection: Keep-Alive\r\n"
+		http_res += b"Keep-Alive: timeout=5 max=1000\r\n"
 		for key in req:
 			http_res += key + b": " + req[key] + b"\r\n" 
 

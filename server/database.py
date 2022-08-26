@@ -98,6 +98,7 @@ class Database:
 
 		self.posts.update({
 			uid: {
+				"user": user,
 				"title": title,
 				"description": description,
 				"date": str(datetime.datetime.now()),
